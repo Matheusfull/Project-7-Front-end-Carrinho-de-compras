@@ -1,4 +1,4 @@
-const createProductImageElement = (imageSource) => {
+/* const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
   img.src = imageSource;
@@ -39,3 +39,4 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
 };
 
 window.onload = () => { };
+ */
