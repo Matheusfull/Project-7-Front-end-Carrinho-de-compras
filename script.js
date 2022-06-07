@@ -1,4 +1,4 @@
-/* const createProductImageElement = (imageSource) => {
+const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
   img.className = 'item__image';
   img.src = imageSource;
@@ -24,6 +24,16 @@ const createProductItemElement = ({ sku, name, image }) => {
   return section;
 };
 
+const render = async () => {
+  const products = await fetchProducts();
+  console.log(products);
+  products.forEach((element) => {
+    const product = createProductItemElement(element);
+    const divProducts = document.querySelector('.items');
+    divProducts.appendChild(product);
+  });
+};
+
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
 const cartItemClickListener = (event) => {
@@ -38,5 +48,6 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
   return li;
 };
 
-window.onload = () => { };
- */
+window.onload = () => {
+  render();
+}; 
