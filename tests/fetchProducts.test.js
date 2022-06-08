@@ -6,7 +6,7 @@ describe('1 - Teste a função fetchProducts', () => {
   // implemente seus testes aqui
   // fail('Teste vazio');
   it('1 - Teste se fetchProducts é uma função', () => {
-    expect(typeof fetchProducts()).toBe('function')
+    expect(typeof fetchProducts).toBe('function')
   });
   it('2 - Com o argumento `computador, verificar se fetch foi chamada`', async () => {
     await fetchProducts('computador')
