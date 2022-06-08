@@ -22,3 +22,10 @@ if (typeof module !== 'undefined') {
     fetchProducts,
   };
 }
+/* [requisito 2]
+1 - a função fetchProducts será assíncrona, logo, precisa do async
+2 - pega a url e implementa na função fetch. Mas para isso, é preciso esperara trazer todos os dados com o await.
+3- trata os dados trazidos com o json e na promise resultante, iremos trabalhar com o array results da promisse.
+4- faz um array de mesmo tamanha, porém com o retorno de um objeto já estabelecido no READ.me do projeto.
+5- retorna esse objeto para ser usado em outra função.
+*/
