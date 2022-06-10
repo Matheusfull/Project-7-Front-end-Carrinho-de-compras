@@ -3,7 +3,10 @@ const fetchProducts = async () => {
   const url = 'https://api.mercadolibre.com/sites/MLB/search?q=computador';
   const result = await fetch(url);
   const response = await result.json();
-  // console.log(response);
+  // console.log(response.results);
+  return response.results;
+  /* 
+  Tinha feito primeiro assim, mas resolvi passar a construção deste objeto para outro arquivo para além de ficar que nem o READ.me aconselha os testes serem aprovados e não ficar passando falso positivo. 
   const data = response.results.map((element) => {
     const obj = {
       sku: element.id,
@@ -11,9 +14,9 @@ const fetchProducts = async () => {
       image: element.thumbnail,
     };
     return obj;
-  });
+  }); */
   // console.log(data);
-  return data;
+  // return data;
 };
 fetchProducts();
 
