@@ -64,6 +64,22 @@ const renderPorducts = async () => {
   });
 };
 // ------------------------------[requisito 2]--------------------------------------------
+let sum = 0;
+/* const price = document.createElement('li');
+price.className = 'total-price'; */
+const price = document.querySelector('.total-price');
+
+const sumPrice = (info) => {
+  console.log(info);
+  sum += info;
+  price.innerText = sum;
+  // cartItem.appendChild(price);
+};
+const sub = (number) => {
+  sum -= number;
+  price.innerText = sum;
+  // cartItem.appendChild(price);
+};
 
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
@@ -79,11 +95,13 @@ const renderCarItem = () => {
 A região que for clicada, vai perder as propriedades e com isso sairá da lista.
 A nova lista será adicionada ao LocalStorage e com isso atualizará qualquer coisa que estiver salva lá, sobreescrevendo.
 */
+// ------------------------------[requisito 5]--------------------------------------------
 const cartItemClickListener = (event) => {
   // coloque seu código aqui
   const itemProduct = event.target;
   itemProduct.remove();
-  console.log(cartItem);
+  // ------------------------------[requisito 5]-------------------------------------------
+  // console.log(cartItem);
   saveCartItems(cartItem.innerHTML);
 };
 /* 
@@ -94,6 +112,10 @@ cartItem.addEventListener('click', (event) => {
   // const item = document.querySelector('.cart__item');
   event.target.remove();
   saveCartItems(cartItem.innerHTML);
+
+  const priceItem = Number(event.target.innerHTML.split('$')[1]);
+  console.log(priceItem);
+  sub(priceItem);
 });
 // ------------------------------[requisito 8]--------------------------------------------
 const createCartItemElement = ({ sku, name, salePrice }) => {
@@ -112,23 +134,23 @@ itens.addEventListener('click', () => {
   array.push(itens);
   console.log(itens);
 }); */
-
+// ------------------------------[requisito 4]--------------------------------------------
 document.addEventListener('click', (event) => {
   if (event.target.className === 'item__add') {
     const id = event.target.parentElement.firstElementChild.innerText;
     fetchItem(id).then((data) => {
-      // console.log(data);
+      // console.log(data.salePrice);
       const item = document.querySelector('.cart__items');
       item.appendChild(createCartItemElement(data));
-      console.log(item);
-// ------------------------------[requisito 8]--------------------------------------------
-/* 
-Problemática - 
-1 - Queremos colocar os ítens da direita no localStorage. Porém, esses itens são criados de duas formas e para cada forma de crição do itens, vamos criar uma possibilidade de adicionar ao localStorage.
-1 - clicando no adicionar ao carrinho 
-2 - Clicando no próprio item para ele sumir e ter uma lista nova.
-*/
-// primeira forma - pegando os itens que são oriundos do botão adicionar ao carrinho:
+      // ------------------------------[requisito 4]--------------------------------------------
+      sumPrice(data.salePrice);
+      /* 
+      Problemática - 
+      1 - Queremos colocar os ítens da direita no localStorage. Porém, esses itens são criados de duas formas e para cada forma de crição do itens, vamos criar uma possibilidade de adicionar ao localStorage.
+      1 - clicando no adicionar ao carrinho 
+      2 - Clicando no próprio item para ele sumir e ter uma lista nova.
+      */
+      // primeira forma - pegando os itens que são oriundos do botão adicionar ao carrinho:
       saveCartItems(item.innerHTML);
     });
   }
@@ -164,4 +186,10 @@ Problemática -
 window.onload = () => {
   renderPorducts();
   renderCarItem();
-}; 
+};
+
+/* 
+requisito 9  - 
+Problemática: 
+pegar todos os preços que aparecem à direita. Se adicionar ao carrinho, vai pegar todos os preços vistos. Se tirar um produto, vai pegar todos os preços restantes. Se atualizar a página, va pegar todos os preços à direita.
+*/
