@@ -6,7 +6,7 @@ const fetchProducts = async () => {
   // console.log(response.results);
   return response.results;
   /* 
-  Tinha feito primeiro assim, mas resolvi passar a construção deste objeto para outro arquivo para além de ficar que nem o READ.me aconselha os testes serem aprovados e não ficar passando falso positivo. 
+  Tinha feito primeiro assim, mas resolvi passar a construção deste objeto para outro arquivo para além de ficar que nem o READ.me aconselha, os testes serem aprovados e não ficar passando falso positivo. 
   const data = response.results.map((element) => {
     const obj = {
       sku: element.id,
@@ -29,6 +29,4 @@ if (typeof module !== 'undefined') {
 1 - a função fetchProducts será assíncrona, logo, precisa do async
 2 - pega a url e implementa na função fetch. Mas para isso, é preciso esperara trazer todos os dados com o await.
 3- trata os dados trazidos com o json e na promise resultante, iremos trabalhar com o array results da promisse.
-4- faz um array de mesmo tamanha, porém com o retorno de um objeto já estabelecido no READ.me do projeto.
-5- retorna esse objeto para ser usado em outra função.
 */
