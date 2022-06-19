@@ -161,9 +161,9 @@ document.addEventListener('click', (event) => {
       // console.log(data.salePrice);
       const item = document.querySelector('.cart__items');
       item.appendChild(createCartItemElement(data));
-      // ------------------------------[requisito 4]--------------------------------------------
+      // ------------------------------[requisito 4--------------------------------------------
       sumPrice(data.salePrice); // [requisito 9 - parte 1]
-      // -------------------------[requisito 8 - Parte 1]---------------------------------------
+      // -------------------------[requisito 8 - Parte 1---------------------------------------
       /* Problemática - 
       1 - Queremos colocar os itens à direita no localStorage. Porém, esses itens são criados de duas formas :
       1 - clicando no 'adicionar ao carrinho'
@@ -209,9 +209,25 @@ limpar.addEventListener('click', () => {
   price.innerHTML = 0;
 });
 
+const removeLoad = () => {
+  setTimeout(() => {
+    document.querySelector('.loading').remove();
+  }, 2000);
+};
+
+const load = () => {
+  const div = document.createElement('div');
+  const carregando = document.querySelector('.carregando');
+  div.className = 'loading';
+  div.innerHTML = 'loading...';
+  carregando.appendChild(div);
+  removeLoad();
+};
+
 window.onload = () => {
   renderPorducts();
   renderCarItem();
+  load();
 };
 
 /* 
