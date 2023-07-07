@@ -15,14 +15,16 @@ describe('1 - Teste a função fetchProducts', () => {
   it('3 - com o argumento computador, a função fetch usa o endpoint https://api.mercadolibre.com/sites/MLB/search?q=computador', async () => {
     await fetchProducts('computador')
     const endpoint = 'https://api.mercadolibre.com/sites/MLB/search?q=computador'
-    expect(fetch).toHaveBeenCalledWidth(endpoint)
+    // expect(fetch).toHaveBeenCalledWidth(endpoint) - não passa no npm test fetchProducts.test.js
+    expect(fetch).toHaveBeenLastCalledWith(endpoint)
   });
   it('4 - Com o argumento computador, deve-se retornar um objeto igual a computadorSearch', async () => {
-    expect(await fetchProducts('computador')).toEqual(computadorSearch)
+    const result = await fetchProducts('computador')
+    expect(result).toEqual(computadorSearch)
 
   });
   it('5 - Se não passar um argumento, deve retornar um erro com a mensagem :You must provide an url', async () => {
-    await expect(fetchProducts()).toThrow('You must provide an url')
+    expect(await fetchProducts()).toEqual(new Error('You must provide an url'))
   });
 });
 

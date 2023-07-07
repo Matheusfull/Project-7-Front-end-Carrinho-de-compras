@@ -1,5 +1,7 @@
 const cartItem = document.querySelector('.cart__items');
 const limpar = document.querySelector('.empty-cart');
+let sum = 0;
+const price = document.querySelector('.total-price');
 
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
@@ -22,7 +24,7 @@ const createProductItemElement = ({ sku, name, image }) => {
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
-  const button = createCustomElement('button', 'item__add', 'Adicionar ao carrinho!');
+  // const button = createCustomElement('button', 'item__add', 'Adicionar ao carrinho!');
   /* 
   AJUDA DO GABS, mas não deu para seguir com o raciocício e criei outro.
   button.addEventListener('click', (event) => {
@@ -30,18 +32,56 @@ const createProductItemElement = ({ sku, name, image }) => {
     const id = buttonInfo.innerText;
     console.log(id);
   }); */
-  section.appendChild(button);
+  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
 
   return section;
 };
-// ------------------------------[requisito 2]--------------------------------------------
+
+// [requisito 9 - parte 1]
+const sumPrice = (priceProduct) => {
+  sum += priceProduct;
+  localStorage.setItem('cartPrice', sum);
+  price.innerText = localStorage.getItem('cartPrice');
+};
+// [requisito 9 - parte 2]
+const sub = (number) => {
+  oldPrice = Number(localStorage.getItem('cartPrice'));
+  newPrice = (oldPrice - number);
+  localStorage.setItem('cartPrice', newPrice);
+  price.innerText = localStorage.getItem('cartPrice');
+};
+
+const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
+
+// [requisito 5]
+/* Ao clicar em algum item da lista, ele será removido do DOM através do método remove() */
+const cartItemClickListener = (event) => {
+  event.target.remove();
+  // [requisito 8 - Parte 1.2]
+  /* 1 - Ao clicar nos itens à direita, eles irão sumir e com isso criará uma nova lista.
+  2 - Essa nova lista irá reescrever no localStorage. */
+  saveCartItems(cartItem.innerHTML);
+  // [requisito 9 - Parte 2]
+  const priceItem = Number(event.target.innerHTML.split('$')[1]);
+  sub(priceItem);
+};
+
+const createCartItemElement = ({ sku, name, salePrice }) => {
+  const li = document.createElement('li');
+  li.className = 'cart__item';
+  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
+  li.addEventListener('click', cartItemClickListener);
+  return li;
+};
+
+// [requisito 2]
 /* Cria toda a estrutura de objeto que estava no arquivo fetchProducts 
 1 - Chama a função fetchProducts para trazer todos os dados que estão na API. Eles virão em forma de array. 
-2 - Usaremos então o map, pois queremos todos os dados, porém com uma outar estrutura, que é a de objeto.
+2 - Usaremos então o map, pois queremos todos os dados, porém com uma outra estrutura, que é a de objeto.
 3 - No map, cada índice do array será retirado o id, title e thumbnail para formar um objeto, que servirá de parâmetro para a função createProductItemElement.
 */
 
-const results = async () => {
+/* const results = async () => {
   const itens = await fetchProducts();
   const item = itens.map((element) => {
     const obj = {
@@ -52,7 +92,7 @@ const results = async () => {
     return obj;
   });
   return item;
-};
+}; */
 /*
 1 - faz a função assíncrona, ou seja, vai ocorrer a parte, usando o async.
 2 - chama a função results, pois ela tem os dados da API e já retonando-os como objetos, mas para isso precisa esperar todas os dados chegarem, usaremos então o await
@@ -60,63 +100,55 @@ const results = async () => {
 4 - Pegamos o lugar que queremos adicionar essa estrutura. Usamos então o querySelector
 5 - Finalmente vamos adicionar a estrutura no lugar que pegamos.
 */
+
 const renderPorducts = async () => {
-  const products = await results();
-  // console.log(products);
+  const divProducts = document.querySelector('.items');
+  const products = await fetchProducts();
+  /* const products = await results();
   products.forEach((element) => {
     const product = createProductItemElement(element);
     const divProducts = document.querySelector('.items');
     divProducts.appendChild(product);
+  }); */
+  products.forEach((product) => {
+    const objProduct = {
+      sku: product.id,
+      name: product.title,
+      image: product.thumbnail,
+    };
+    const productRender = createProductItemElement(objProduct);
+    divProducts.appendChild(productRender);
   });
 };
-// ------------------------------[requisito 2]--------------------------------------------
-let sum = 0;
-/* const price = document.createElement('li');
-price.className = 'total-price'; */
-const price = document.querySelector('.total-price');
 
-const sumPrice = (info) => {
-  // console.log(info);
-  sum += info;
-  price.innerText = sum;
-  // cartItem.appendChild(price);
-};
-// [requisito 9 - parte 2]
-const sub = (number) => {
-  sum -= number;
-  price.innerText = sum;
-  // cartItem.appendChild(price);
-};
-
-const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
-
-// -----------------------------[requisito 8 - Parte 1.1]----------------------------------
-/* 
-Ao renderizar a página, trazemos as informações do localStorage através do cartItem (região que estará a lista) e innerHTML (que é para escrever nessa região o que queremos). Queremos então escrever a estrutura HTML que foi salva no LocalStorage.
+// [requisito 4]
+/* 1 - Vamos pegar a página e colocar um escutador de clique
+2 - Se o click ocorrer no botão, vamos pegar o id do produto correspondente ao botão
+3 - Adicionaremos esse id ao parâmetro da fetchItem, tratamos essa promise com o .then e pegamos a informação, até porque depois de uma requisição tratada, ela retorna um 'objeto'.
+4 - Vamos colocar esse objeto ja estruturado -para isso usaremos a função createCartItemElement- como filho do elemento <ol class="cart__items">
 */
-const renderCarItem = () => {
-  cartItem.innerHTML = getSavedCartItems();
-};
-// ----------------------------[requisito 8 - Parte 1.1]-----------------------------------
-
-// ------------------------------[requisito 5]--------------------------------------------
-/* 
-1 - Ao clicar em algum item da lista, ele será removido do DOM atrvés do método remove()
+document.addEventListener('click', (event) => {
+  if (event.target.className === 'item__add') {
+    const id = event.target.parentElement.firstElementChild.innerText;
+    fetchItem(id).then((data) => {
+      // const item = document.querySelector('.cart__items');
+      cartItem.appendChild(createCartItemElement(data));
+      // [requisito 4]
+      // [requisito 8 - Parte 1]
+      /* Problemática - 
+      1 - Queremos colocar os itens à direita no localStorage. Porém, esses itens são criados de duas formas :
+      1 - clicando no 'adicionar ao carrinho'
+      2 - Clicando no próprio item para ele sumir e ter uma lista nova.
+  1 - pegando os itens que são oriundos do botão 'adicionar ao carrinho':
 */
-const cartItemClickListener = (event) => {
-  // coloque seu código aqui
-  const itemProduct = event.target;
-  itemProduct.remove();
-  // ------------------------------[requisito 5]-------------------------------------------
-  // console.log(cartItem);
+      // [Requisito 8 - Parte 1.1]
+      saveCartItems(cartItem.innerHTML);
+      sumPrice(data.salePrice); // [requisito 9 - parte 1]
+    });
+  }
+});
 
-  // ----------------------------[requisito 8 - Parte 2]-----------------------------------
-  // 1 - Ao clicar nos itens à direita, eles irão sumir e com isso criará uma nova lista.
-  // 2 - Essa nova lista será adicionada ao localStorage. 
-  saveCartItems(cartItem.innerHTML);
-  // ----------------------------[requisito 8 - Parte 2]-----------------------------------
-};
-// ----------------------------[requisito 8 - Parte 2.2]-----------------------------------
+// [requisito 8 - Parte 1.2]
 /* 
 1- A região que for clicada, vai perder as propriedades e com isso sairá da lista.
 2- Pegamos a nova lista, sem o itens clicados - pois foram excluídos - e colocamos no localStorage para atualizar a lista salva. 
@@ -125,58 +157,41 @@ Tive que forçar essa exclusão pois no requisito 5 não foi sufciente para excl
 cartItem.addEventListener('click', (event) => {
   event.target.remove();
   saveCartItems(cartItem.innerHTML);
-  // ----------------------------[requisito 8 - Parte 2.2]-----------------------------------
-  const priceItem = Number(event.target.innerHTML.split('$')[1]);
-  // console.log(priceItem);
-  sub(priceItem);
 });
-// ------------------------------[requisito 8]--------------------------------------------
-const createCartItemElement = ({ sku, name, salePrice }) => {
-  const li = document.createElement('li');
-  li.className = 'cart__item';
-  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', cartItemClickListener);
-  return li;
+
+limpar.addEventListener('click', () => {
+  localStorage.clear();
+  cartItem.innerHTML = '';
+  localStorage.setItem('cartPrice', 0);
+  price.innerHTML = localStorage.getItem('cartPrice');
+});
+
+const load = () => {
+  const p = document.createElement('p');
+  p.className = 'loading';
+  p.innerHTML = 'loading...';
+  const carregando = document.querySelector('.carregando');
+  carregando.appendChild(p);
+  setTimeout(() => {
+    document.querySelector('.loading').remove();
+  }, 1500);
+};
+
+window.onload = () => {
+  renderPorducts();
+  cartItem.innerHTML = getSavedCartItems();
+  load();
+  price.innerText = localStorage.getItem('cartPrice');
 };
 /*
-tentando adicionar a lista lateral ao localStorage, porém não consigo pegar a lista atualzada, ou seja, depois que clica no item ele some e com isso a lista não se atualiza
-const array = [];
-const itens = document.querySelector('.cart__items');
-
-itens.addEventListener('click', () => {
-  array.push(itens);
-  console.log(itens);
-}); */
-// ------------------------------[requisito 4]--------------------------------------------
-/* 1 - Vamos pegar a página e colocar um escutador de clique
-2 - Se o click ocorrer no botão, vamos pegar o id do produto correspondente ao botão
-3 - Adicionaremos esse id ao parâmetro da fetchItem, tratamos essa promise com o .then e pegamos a informação, até porque depois de uma requisição tratada, ela retorna um 'objeto'.
-4 - Pegamos o lugar onde colocaremos esse 'objeto'(data)
-5 - Pegamos o 'objeto'(data), colocamos na função createCartItemElement - que deixará na forma HTML - e esse resultado colocamos no lugar escolhido no passo 4.
+requisito 9  -
+Problemática:
+pegar todos os preços que aparecem à direita. Se adicionar ao carrinho, vai pegar todos os preços vistos. Se tirar um produto, vai pegar todos os preços restantes. Se atualizar a página, vai pegar todos os preços à direita. Raciocínio análogo ao requi 8, porém ao invés de adicionar ao localStorage, vai pegar os valores e somar.
+1 - Pega o preço do item clicado no 'adicionar ao carrinho'
+2 - Retirar o preço do item clicado na lista
 */
-document.addEventListener('click', (event) => {
-  if (event.target.className === 'item__add') {
-    const id = event.target.parentElement.firstElementChild.innerText;
-    fetchItem(id).then((data) => {
-      // console.log(data.salePrice);
-      const item = document.querySelector('.cart__items');
-      item.appendChild(createCartItemElement(data));
-      // ------------------------------[requisito 4--------------------------------------------
-      sumPrice(data.salePrice); // [requisito 9 - parte 1]
-      // -------------------------[requisito 8 - Parte 1---------------------------------------
-      /* Problemática - 
-      1 - Queremos colocar os itens à direita no localStorage. Porém, esses itens são criados de duas formas :
-      1 - clicando no 'adicionar ao carrinho'
-      2 - Clicando no próprio item para ele sumir e ter uma lista nova.
-  1 - pegando os itens que são oriundos do botão 'adicionar ao carrinho':
-*/
-      saveCartItems(item.innerHTML);
-    });
-  }
-});
-// ------------------------------[requisito 8 - Parte 1]-----------------------------------
 
-/* if (localStorage.getItem('cartItems') === null) {
+/* acho que é referente ao req 4 -  if (localStorage.getItem('cartItems') === null) {
   console.log('oi oi ')
   localStorage.setItem('cartItems', JSON.stringify([data]));
 } else {
@@ -202,38 +217,12 @@ document.addEventListener('click', (event) => {
   divProduct.appendChild(productItem);
 }; */
 
-limpar.addEventListener('click', () => {
-  // console.log('limpar ativado');
-  cartItem.innerHTML = '';
-  localStorage.clear();
-  price.innerHTML = 0;
-});
+/*
+tentando adicionar a lista lateral ao localStorage, porém não consigo pegar a lista atualzada, ou seja, depois que clica no item ele some e com isso a lista não se atualiza
+const array = [];
+const itens = document.querySelector('.cart__items');
 
-const removeLoad = () => {
-  setTimeout(() => {
-    document.querySelector('.loading').remove();
-  }, 2000);
-};
-
-const load = () => {
-  const div = document.createElement('div');
-  const carregando = document.querySelector('.carregando');
-  div.className = 'loading';
-  div.innerHTML = 'loading...';
-  carregando.appendChild(div);
-  removeLoad();
-};
-
-window.onload = () => {
-  renderPorducts();
-  renderCarItem();
-  load();
-};
-
-/* 
-requisito 9  - 
-Problemática: 
-pegar todos os preços que aparecem à direita. Se adicionar ao carrinho, vai pegar todos os preços vistos. Se tirar um produto, vai pegar todos os preços restantes. Se atualizar a página, vai pegar todos os preços à direita. Raciocínio análogo ao requi 8, porém ao invés de adicionar ao localStorage, vai pegar os valores e somar. 
-1 - Pega o preço do item clicado no 'adicionar ao carrinho'
-2 - Retirar o preço do item clicado na lista
-*/
+itens.addEventListener('click', () => {
+  array.push(itens);
+  console.log(itens);
+}); */

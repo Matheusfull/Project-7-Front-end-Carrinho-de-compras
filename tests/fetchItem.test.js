@@ -25,3 +25,15 @@ describe('2 - Teste a função fetchItem', () => {
     await expect(fetchProducts()).toThrow('You must provide an url')
   });
 });
+
+/*
+1 - Para verificar se uma função é função é só aplicar o typeof dela
+
+2 - só verificar se a func foi chamada com o toHaveBeenCalled
+
+3 - Ao passar o parâmetro, o endpoint tem que ter a url sugerida, veremos isso usando o toHaveBeenCalledWidth
+
+4 - só passar o argumento
+
+5 - só chamar a função e verificar o erro com o toThrow
+*/
