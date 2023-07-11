@@ -6,6 +6,10 @@
 
 # Habilidades necessárias
 
+<details><strong>Deploy da Aplicação</strong>
+<strong>`https://matheusfull.github.io/Project-7-Front-end-Carrinho-de-compras/`</strong>
+</details>
+
 <details>
   <summary><strong>:memo: Habilidades</strong></summary><br />
 
