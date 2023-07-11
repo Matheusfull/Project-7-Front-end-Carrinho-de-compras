@@ -18,23 +18,19 @@ const createCustomElement = (element, className, innerText) => {
 };
 
 const createProductItemElement = ({ sku, name, image }) => {
-  const section = document.createElement('section');
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const section = document.createElement('div');
   section.className = 'item';
 
-  section.appendChild(createCustomElement('span', 'item__sku', sku));
-  section.appendChild(createCustomElement('span', 'item__title', name));
+  section.appendChild(createCustomElement('h2', 'item__sku', sku));
+  section.appendChild(createCustomElement('h3', 'item__title', name));
   section.appendChild(createProductImageElement(image));
-  // const button = createCustomElement('button', 'item__add', 'Adicionar ao carrinho!');
-  /* 
-  AJUDA DO GABS, mas não deu para seguir com o raciocício e criei outro.
-  button.addEventListener('click', (event) => {
-    const buttonInfo = event.target.parentElement.firstElementChild;
-    const id = buttonInfo.innerText;
-    console.log(id);
-  }); */
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
+  card.appendChild(section);
 
-  return section;
+  return card;
 };
 
 // [requisito 9 - parte 1]
@@ -81,18 +77,6 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
 3 - No map, cada índice do array será retirado o id, title e thumbnail para formar um objeto, que servirá de parâmetro para a função createProductItemElement.
 */
 
-/* const results = async () => {
-  const itens = await fetchProducts();
-  const item = itens.map((element) => {
-    const obj = {
-      sku: element.id,
-      name: element.title,
-      image: element.thumbnail,
-    };
-    return obj;
-  });
-  return item;
-}; */
 /*
 1 - faz a função assíncrona, ou seja, vai ocorrer a parte, usando o async.
 2 - chama a função results, pois ela tem os dados da API e já retonando-os como objetos, mas para isso precisa esperar todas os dados chegarem, usaremos então o await
@@ -104,12 +88,6 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
 const renderPorducts = async () => {
   const divProducts = document.querySelector('.items');
   const products = await fetchProducts();
-  /* const products = await results();
-  products.forEach((element) => {
-    const product = createProductItemElement(element);
-    const divProducts = document.querySelector('.items');
-    divProducts.appendChild(product);
-  }); */
   products.forEach((product) => {
     const objProduct = {
       sku: product.id,
@@ -131,7 +109,6 @@ document.addEventListener('click', (event) => {
   if (event.target.className === 'item__add') {
     const id = event.target.parentElement.firstElementChild.innerText;
     fetchItem(id).then((data) => {
-      // const item = document.querySelector('.cart__items');
       cartItem.appendChild(createCartItemElement(data));
       // [requisito 4]
       // [requisito 8 - Parte 1]
@@ -164,6 +141,7 @@ limpar.addEventListener('click', () => {
   cartItem.innerHTML = '';
   localStorage.setItem('cartPrice', 0);
   price.innerHTML = localStorage.getItem('cartPrice');
+  sum = 0;
 });
 
 const load = () => {
@@ -190,39 +168,3 @@ pegar todos os preços que aparecem à direita. Se adicionar ao carrinho, vai pe
 1 - Pega o preço do item clicado no 'adicionar ao carrinho'
 2 - Retirar o preço do item clicado na lista
 */
-
-/* acho que é referente ao req 4 -  if (localStorage.getItem('cartItems') === null) {
-  console.log('oi oi ')
-  localStorage.setItem('cartItems', JSON.stringify([data]));
-} else {
-  const oldItens = getSavedCartItems();
-  const array = [];
-  console.log(JSON.parse(oldItens))
-  array.push(data);
-  console.log(array);
-  saveCartItems(array);
-} */
-// funcção para pegar os itens e adicioná-los, mas está pegando só o último item saveCartItems(createCartItemElement(data));
-/*  const info = data;
- const array = [];
- array.push(info);
- console.log(array); */
-// console.log(data);
-
-/* const renderItem = async () => {
-  const item = await fetchItem();
-  console.log(item);
-  const divProduct = document.querySelector('.cart__items');
-  const productItem = createCartItemElement(item);
-  divProduct.appendChild(productItem);
-}; */
-
-/*
-tentando adicionar a lista lateral ao localStorage, porém não consigo pegar a lista atualzada, ou seja, depois que clica no item ele some e com isso a lista não se atualiza
-const array = [];
-const itens = document.querySelector('.cart__items');
-
-itens.addEventListener('click', () => {
-  array.push(itens);
-  console.log(itens);
-}); */
